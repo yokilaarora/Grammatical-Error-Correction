@@ -159,11 +159,10 @@ else:
         for pred in smt_y_pred:
             prob = 0
             for w in range(len(pred)):
-                if(y_p[w]>=thresh):
-                    if(prob==0):
-                        prob = y_p[w]
-                    else:
-                        prob = prob*y_p[w]
+                if(prob==0):
+                    prob = y_p[w]
+                else:
+                    prob = prob*y_p[w]
             if(prob>max_prob):
                 max_prob = prob
                 best_pred = pred
