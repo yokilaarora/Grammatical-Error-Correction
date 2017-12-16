@@ -164,14 +164,13 @@ else:
             for w in range(len(VS)):
                 if(pred[w]==1):               #existence of word in the target sentence
                     prob = prob*y_p[w]
-            if(prob>max_prob):
+            if(prob > max_prob):
                 max_prob = prob
                 best_pred = pred
 
         source_words = []
         target_words = []
         hypothesis = []
-        a = []
 
         # Find input sentence words from its bag of words
         for ws in range(len(VS)):
