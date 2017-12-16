@@ -161,7 +161,7 @@ else:
         best_pred = []
         for pred in smt_y_pred:
             prob = 1;
-            for w in range(len(VS)):
+            for w in range(len(VT)):
                 if(pred[w]==1):               #existence of word in the target sentence
                     prob = prob*y_p[w]
             if(prob > max_prob):
