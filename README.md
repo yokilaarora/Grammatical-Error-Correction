@@ -11,3 +11,10 @@ File description:
   
 3. maintest.py: 
   This file contains the code for traning and testing the model, along with the hyper-parameters used, and the code for calculation for F0.5 score. 
+  
+4. create_source.py:
+   This file formats the file containing input sentences to a suitable format for the SMT model.
+  
+5. create_target.py:
+   This file formats the file containing output sentences to a suitable format for the SMT model.
+  
