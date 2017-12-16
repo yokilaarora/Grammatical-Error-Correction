@@ -136,11 +136,8 @@ else:
     smt_preds = []
     for line in smt_file:
         smt_preds.append(line)
-
-    thresh = 0.03 #the threshold probability value above which the classifier output is considered to be one
     
     R, P, F05, e_count, g_count, common_count = 0,0,0,0,0,0
-    print('Threshold taken for prediction:',thresh)
     
     for x_sample, y_sample in t_loader:
         print('Iteration:',c+1)
@@ -152,42 +149,40 @@ else:
         x_s = x_sample[0]
         y_s = y_sample[0]
         y_p = y_pred[0]
-        smt_y_pred = smt_preds[c-1:c-1+6]     # 5 SMT model predictions
-
-        max_prob = 0
-        best_pred = []
-        for pred in smt_y_pred:
-            prob = 0
-            for w in range(len(pred)):
-                if(prob==0):
-                    prob = y_p[w]
-                else:
-                    prob = prob*y_p[w]
-            if(prob>max_prob):
-                max_prob = prob
-                best_pred = pred
+        smt_y_pred = smt_preds[5*c:5*c+5]     # 5 SMT model predictions in binary bag of words representation
 
         # Define vocabularies to extract words
         VS = list(get_dict("conll14st-preprocessed","conllFile"))
         VT = list(target_get_dict("ann_file_new","test_ann_file_new"))
         VS_dict = {v: k for v, k in enumerate(VS)}  # Source Vocab dictionary
         VT_dict = {v: k for v, k in enumerate(VT)}  # Target Vocab dictionary
+       
+        max_prob = 0
+        best_pred = []
+        for pred in smt_y_pred:
+            prob = 1;
+            for w in range(len(VS)):
+                if(pred[w]==1):               #existence of word in the target sentence
+                    prob = prob*y_p[w]
+            if(prob>max_prob):
+                max_prob = prob
+                best_pred = pred
 
         source_words = []
         target_words = []
         hypothesis = []
         a = []
 
-        # Find bag of words for the input sentence
+        # Find input sentence words from its bag of words
         for ws in range(len(VS)):
             if x_s[ws] == 1:
                 source_words.append(VS_dict[ws])
 
+        # Find target sentence and system output words from its bag of words
         for wt in range(len(VT)):
             if y_s[wt] == 1:
-                a.append(wt)
                 target_words.append(VT_dict[wt])
-            if best_pred[wt] >= thresh:   
+            if best_pred[wt] == 1:
                 hypothesis.append(VT_dict[wt])
             
         common_words = set(hypothesis).intersection(target_words)
@@ -197,7 +192,7 @@ else:
         e_count = e_count + ec      # number of predicted corrections
         g_count = g_count + eg      # number of gold-edit corrections
         common_count = common_count + ecommon #common/-Intersection
-        # F0.5 score for a set of 1 sentence only
+        
         if e_count != 0 and g_count != 0:
             R = common_count/g_count
             P = common_count/e_count
